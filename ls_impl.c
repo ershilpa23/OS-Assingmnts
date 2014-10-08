@@ -26,7 +26,13 @@ extern  int alphasort();                        //Inbuilt sorting function
 static char perms_buff[30];
 char pathname[MAXPATHLEN];
 
-
+ char dirname[10];
+ DIR*p;                 
+ struct dirent *d;      
+/*struct dirent {
+ ino_t d_ino;                                 //( inode number)
+ char d_name[256];                            //( filename )
+}*/
 
 void die(char *msg)
 {
@@ -119,64 +125,24 @@ int excecute_a()                                                            /* f
                 exit(0);
         }
 
-int excecute_l()                                                          /* function for excecuting ls -l */
-{             int count,i;  
-              struct direct **files;  
-              struct stat statbuf;  
-              char datestring[256];  
-              struct passwd pwent;  
-              struct passwd *pwentp;  
-              struct group grp;  
-              struct group *grpt;  
-              struct tm time;  
-              char buf[1024];  
-  
-      
-  
-      count = scandir(pathname, &files, file_selecto, alphasort);  
+int excecute_lp()
+{
+printf("Enter path:\n");
+ scanf("%s",dirname);
+ p=opendir(dirname);
+ if(p==NULL)
+   {
+    perror("Cannot find directory");
+    exit(-1);
+   }
+ while(d=readdir(p))
+ {
+  if((d->d_name[0])!='.')
 
-        
-  
-      if(count > 0)  
-           {  
-               printf("total %d\n",count);  
-  printf("pathname name is = %s\n" , pathname);
-                  for (i=0; i<count; ++i)  
-                   {  
-                    // if (stat(files[i]->d_name, &statbuf) == 0)  
-                        // {  
-                                                                                            /* Print out type, permissions, and number of links. */  
-                           // printf("%10.10s", get_perms(statbuf.st_mode));                      /* File mode (type, perms) */       
-                           // printf(" %d", statbuf.st_nlink);                                     /* Number of links */
-  
-                    if (!getpwuid_r(statbuf.st_uid, &pwent, buf, sizeof(buf), &pwentp))  
-                            printf(" %s", pwent.pw_name);  
-                    else  
-                            printf(" %d", statbuf.st_uid);                                       /* User ID of the file's owner */
-  
-                    if (!getgrgid_r (statbuf.st_gid, &grp, buf, sizeof(buf), &grpt))  
-                            printf(" %s", grp.gr_name);  
-                    else  
-                            printf(" %d", statbuf.st_gid);                                       /* Group ID of the file's group */  
-  
-                                                                                                 /* Print size of file. */  
-                            printf(" %5d", (int)statbuf.st_size);  
-                                                                                  
-                            localtime_r(&statbuf.st_mtime, &time);                               /* Time of last data modification */
-                                                                                                 /* Get localized date string. */  
-                            strftime(datestring, sizeof(datestring), "%F %T", &time);  
-  
-                            printf(" %s %s\n", datestring, files[i]->d_name);  
-                                                                           //}  
-  
-                                      free (files[i]);  
-                                                                                    }  
-  
-                                      free(files);  
-                                                                                                  }                                                                                               
-                                      exit(0);
-                                                                                                                }
-   int excecute_lp()                                                          /* function for excecuting ls -l */
+ printf("%s\n",d->d_name);
+
+}                                                          
+   int excecute_l()                                                          /* function for excecuting ls -l */
 {             int count,i;  
               struct direct **files;  
               struct stat statbuf;  
@@ -260,23 +226,26 @@ int count,i;
 
 int main(int argc, char* argv[])
 {
-      
-      if (argc ==2)
-              {
-                  if (!strcmp(argv[1], "-a"))                                       /* if user selict "-a" */
-                       {                                                    
-                          excecute_a();
-                                     }
+if (argc ==2){
+   if (!strcmp(argv[1], "-a"))                                       /* if user selict "-a" */
+      {                                                    
+        excecute_a();
+       }
 
-                 if (!strcmp(argv[1], "-l"))                                        /* if user selict "-l" */
-                       {
-                          excecute_lp();                                    
-                                    }
-                                         }
-                 if (argc == 3)
-                       {
-                           strcpy(pathname, argv[2]);
-                            excecute_l();         }
+       if (!strcmp(argv[1], "-l"))                                        /* if user selict "-l" */
+        {
+          excecute_l();                                    
+        }
+      }
+    if (argc == 2){
+         if (!strcmp(argv[1], dirname))
+          {
+           execute_lp();
+           }
+     }
+
+
+                       
                                                  
 
  
@@ -286,6 +255,11 @@ int main(int argc, char* argv[])
     }
     
                  
+                                                
+               
+
+
+       
                                                 
                
 
