@@ -50,7 +50,7 @@ int main() {
   }
   else {
   if(execvp(argv[0], argv) < 0) { 
-    printf("Exec failed\n");
+    printf("Execution failed\n");
     exit(1);
   }
  }
